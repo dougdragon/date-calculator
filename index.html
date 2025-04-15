@@ -1,88 +1,93 @@
 <!DOCTYPE html>
-<html>
+<html lang='en'>
 <head>
+    <meta charset='UTF-8'>
+    <meta name='viewport' content='width=device-width, initial-scale=1.0'>
     <title>Six month date calculator</title>
-    <meta charset="UTF-8" />
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/uikit@3.21.9/dist/css/uikit.min.css" />
-    <script src="https://cdn.jsdelivr.net/npm/uikit@3.21.9/dist/js/uikit.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/uikit@3.21.9/dist/js/uikit-icons.min.js"></script>
+    <link rel='stylesheet' href='https://cdn.jsdelivr.net/npm/uikit@3.16.5/dist/css/uikit.min.css' />
+    <script src='https://cdn.jsdelivr.net/npm/uikit@3.16.5/dist/js/uikit.min.js'></script>
+    <script src='https://cdn.jsdelivr.net/npm/uikit@3.16.5/dist/js/uikit-icons.min.js'></script>
+    <style>
+        body {
+            margin: 20px;
+        }
+        .container {
+            max-width: 500px;
+            margin: 0 auto;
+        }
+    </style>
 </head>
 <body>
-    <div class="uk-position-top uk-text-xlarge uk-text-center uk-margin-large-top">
-        <label
-            for="startDate"
-            class="uk-margin-small-right uk-text-large"
-        >
-            Enter or select a start date:
-        </label>
-        <input
-            type="date"
-            id="startDate"
-            class="uk-text-large"
-        >
-        <span
-            uk-icon="icon: arrow-left; ratio: 5"
-            style="visibility: hidden;"
-            id="big-fn-arrow"
-        >
-        </span><br />
-        <div class="uk-margin-large-top uk-margin-large-bottom">
-            <img
-                src="images/poop.jpg"
-                width="50"
-                class="uk-margin-small-right"
-                id="poop"
-                title="hidey ho!"
-            />
-            <button
-                class="uk-button uk-button-primary uk-button-primary uk-margin-small-top"
-                onclick="calculateEndDate()"
-            >
-                Calculate the date in 6 months
-            </button>
-            <a
-                href=""
-                uk-icon="icon: refresh"
-                onclick="reset()"
-                title="Reset"
-            ></a>
-            <p
-                id="endDate"
-                class="uk-text-large"
-                style="display: none"
-            ></p>
+    <div class='uk-container container'>
+        <h2 class='uk-text-center'>Date Calculator</h2>
+
+        <div class='uk-margin'>
+            <label class='uk-form-label' for='startDate'>Select Start Date:</label>
+            <div class='uk-form-controls'>
+                <input class='uk-input uk-text-center' type='date' id='startDate'>
+            </div>
         </div>
+
+        <button class='uk-button uk-button-primary uk-width-1-1' onclick='calculateFutureDate()'>Calculate 6 months</button>
+        <div class='uk-width-1-1 uk-text-center'>
+        </div>
+
+        <div class='uk-margin'>
+            <label class='uk-form-label'>Future Date <i>(click date to copy)</i></label>
+            <div class='uk-form-controls'>
+                <input class='uk-input uk-text-center' type='text' id='futureDate' value='' readonly title='Click to copy'>
+                 <button class='uk-button uk-button-small uk-width-1-1 uk-margin' onclick='reset()' id='reset'>Reset</button>
+            </div>
+        </div>
+        <img src='images/poop.jpg' width='50' class='uk-align-center' id='poop' title='hidey ho!' style='visibility: hidden;'>
     </div>
 
     <script>
-        const bigFnArrow = document.getElementById('big-fn-arrow');
-        const startDateInput = document.getElementById('startDate');
-        const endDateOutput = document.getElementById('endDate');
-
-        const calculateEndDate = () => {
-            if (startDateInput.value === '') {
-                endDateOutput.innerHTML = '<b>Please enter a valid start date</b>'
-                endDateOutput.style.display = ''
+        // Click event for the future date element to copy the output
+        const futureDateInput = document.getElementById('futureDate');
+        futureDateInput.addEventListener('click', () => {
+            let initialValue = futureDateInput.value;
+            if (initialValue.length > 0) {
+                futureDateInput.select();
+                document.execCommand('copy');
+                futureDateInput.value = 'Date copied to clipboard!';
                 setTimeout(() => {
-                    bigFnArrow.style.visibility = 'visible';
-                }, 500);
-            } else {
-                bigFnArrow.style.visibility = 'hidden';
-                console.log(`--- DEBUG -- Input date: ${startDateInput.value}`)
-                const startDate = new Date(startDateInput.value);
-                startDate.setMonth(startDate.getMonth() + 6);
-
-                const options = { month: 'long', day: 'numeric', year: 'numeric' };
-                const formattedEndDate = startDate.toLocaleDateString('en-US', options);
-
-                endDateOutput.innerHTML = `Six months from the start date: <b>${formattedEndDate}</b>`;
-                endDateOutput.style.display = ''
+                    futureDateInput.value = initialValue;
+                }, 1500);
             }
-        }
+        });
+
+        const calculateFutureDate = () => {
+            const startDateInput = document.getElementById('startDate');
+            const futureDateInput = document.getElementById('futureDate');
+            const startDateValue = startDateInput.value;
+
+            if (!startDateValue) {
+                UIkit.modal.alert('Please select a start date.');
+                return;
+            }
+
+            const startDate = new Date(startDateValue);
+            startDate.setMonth(startDate.getMonth() + 6);
+
+            const year = startDate.getFullYear();
+            const month = String(startDate.getMonth() + 1).padStart(2, '0'); // Month is 0-indexed
+            const day = String(startDate.getDate()).padStart(2, '0');
+            const futureDateFormatted = `${month}/${day}/${year}`;
+
+            futureDateInput.value = futureDateFormatted;
+
+            setTimeout(() => {
+                document.getElementById('poop').style.visibility = 'visible';
+            }, 500); // SURPRISE
+        };
 
         const reset = () => {
-            endDateOutput.style.display = 'none';
-        }
+            // Reset start and future dates and hide the poop
+            document.getElementById('futureDate').value = '';
+            document.getElementById('startDate').value = '';
+            document.getElementById('poop').style.visibility = 'hidden';
+        };
     </script>
 </body>
 </html>
