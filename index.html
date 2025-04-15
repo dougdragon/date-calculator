@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Six month date calculator</title>
+    <meta charset="UTF-8" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/uikit@3.21.9/dist/css/uikit.min.css" />
+    <script src="https://cdn.jsdelivr.net/npm/uikit@3.21.9/dist/js/uikit.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/uikit@3.21.9/dist/js/uikit-icons.min.js"></script>
+</head>
+<body>
+    <div class="uk-position-top uk-text-xlarge uk-text-center uk-margin-large-top">
+        <label
+            for="startDate"
+            class="uk-margin-small-right uk-text-large"
+        >
+            Enter or select a start date:
+        </label>
+        <input
+            type="date"
+            id="startDate"
+            class="uk-text-large"
+        >
+        <span
+            uk-icon="icon: arrow-left; ratio: 5"
+            style="visibility: hidden;"
+            id="big-fn-arrow"
+        >
+        </span><br />
+        <div class="uk-margin-large-top uk-margin-large-bottom">
+            <img
+                src="images/poop.jpg"
+                width="50"
+                class="uk-margin-small-right"
+                id="poop"
+                title="hidey ho!"
+            />
+            <button
+                class="uk-button uk-button-primary uk-button-primary uk-margin-small-top"
+                onclick="calculateEndDate()"
+            >
+                Calculate the date in 6 months
+            </button>
+            <a
+                href=""
+                uk-icon="icon: refresh"
+                onclick="reset()"
+                title="Reset"
+            ></a>
+            <p
+                id="endDate"
+                class="uk-text-large"
+                style="display: none"
+            ></p>
+        </div>
+    </div>
+
+    <script>
+        const bigFnArrow = document.getElementById('big-fn-arrow');
+        const startDateInput = document.getElementById('startDate');
+        const endDateOutput = document.getElementById('endDate');
+
+        const calculateEndDate = () => {
+            if (startDateInput.value === '') {
+                endDateOutput.innerHTML = '<b>Please enter a valid start date</b>'
+                endDateOutput.style.display = ''
+                setTimeout(() => {
+                    bigFnArrow.style.visibility = 'visible';
+                }, 500);
+            } else {
+                bigFnArrow.style.visibility = 'hidden';
+                console.log(`--- DEBUG -- Input date: ${startDateInput.value}`)
+                const startDate = new Date(startDateInput.value);
+                startDate.setMonth(startDate.getMonth() + 6);
+
+                const options = { month: 'long', day: 'numeric', year: 'numeric' };
+                const formattedEndDate = startDate.toLocaleDateString('en-US', options);
+
+                endDateOutput.innerHTML = `Six months from the start date: <b>${formattedEndDate}</b>`;
+                endDateOutput.style.display = ''
+            }
+        }
+
+        const reset = () => {
+            endDateOutput.style.display = 'none';
+        }
+    </script>
+</body>
+</html>
